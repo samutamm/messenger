@@ -5,7 +5,7 @@
             [compojure.handler                :as handler]
             [ring.util.response               :as resp]
             [ring.middleware.json             :as rj]
-            [compojure.route                  :as route]))
+            [compojure.route                  :as route]]))
 
 
 (def conn (nr/connect "http://localhost:7474/db/data/" ))
@@ -39,8 +39,19 @@
   (route/resources "/")
   (route/not-found "Not Found"))
 
+(defn allow-cross-origin
+  "middleware function to allow cross origin"
+  [handler]
+  (fn [request]
+    (let [response (handler request)]
+      (-> response
+       (assoc-in [:headers "Access-Control-Allow-Origin"]  "*")
+       (assoc-in [:headers "Access-Control-Allow-Methods"] "GET,PUT,POST,DELETE,OPTIONS")
+       (assoc-in [:headers "Access-Control-Allow-Headers"] "X-Requested-With,Content-Type,Cache-Control")))))
+
 (def app
   (-> app-routes
       (handler/site)
+      (allow-cross-origin)
       (rj/wrap-json-response)
       (rj/wrap-json-body)))
