@@ -1,7 +1,7 @@
 (ns messenger.handler
   (:require [clojurewerkz.neocons.rest        :as nr]
             [clojurewerkz.neocons.rest.cypher :as cy]
-            [compojure.core                   :refer [GET defroutes]]
+            [compojure.core                   :refer [GET POST defroutes]]
             [compojure.handler                :as handler]
             [ring.util.response               :as resp]
             [ring.middleware.json             :as rj]
@@ -25,14 +25,22 @@
   (let [[result] (cy/tquery conn channel-query {:organization (str org)})]
     result))
 
+(defn create-new-channel
+  [body]
+  (let [organization (get body "organization")
+        name (get body "channel")]
+    (cy/tquery conn create-channel
+      {:organization (str organization) :newName (str name)})))
 
 (defroutes app-routes
   (GET "/" [] (resp/response (hello)))
   (GET "/channels" [organization] (resp/response (get-channels organization)))
+  (POST "/channels/new" {body :body} (resp/response (create-new-channel body)))
   (route/resources "/")
   (route/not-found "Not Found"))
 
 (def app
   (-> app-routes
       (handler/site)
-      (rj/wrap-json-response)))
+      (rj/wrap-json-response)
+      (rj/wrap-json-body)))
