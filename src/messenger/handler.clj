@@ -5,7 +5,7 @@
             [compojure.handler                :as handler]
             [ring.util.response               :as resp]
             [ring.middleware.json             :as rj]
-            [compojure.route                  :as route]]))
+            [compojure.route                  :as route]))
 
 
 (def conn (nr/connect "http://localhost:7474/db/data/" ))
@@ -22,7 +22,7 @@
 
 (defn get-channels
   [org]
-  (let [[result] (cy/tquery conn channel-query {:organization (str org)})]
+  (let [result (cy/tquery conn channel-query {:organization (str org)})]
     result))
 
 (defn create-new-channel
