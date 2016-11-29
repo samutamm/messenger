@@ -10,7 +10,8 @@
 
 (defroutes app-routes
   (GET "/channels" [organization] (resp/response (channels/get-channels organization)))
-  (POST "/channels/new" {body :body} (resp/response (channels/create-new-channel body)))
+  (POST "/channels/new" {body :body} (let [org (get body "organization") name (get body "channel")]
+                                        (resp/response (channels/create-new-channel org name))))
   (route/resources "/")
   (route/not-found "Not Found"))
 

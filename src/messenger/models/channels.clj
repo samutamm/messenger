@@ -11,10 +11,19 @@
                           CREATE (c:Channel {name: {newName}}),
                           (org)-[:HAS_CHANNEL]->(c);")
 
+(def delete-channel-query "MATCH (org:Organization)-[rel:HAS_CHANNEL]->(c)
+                        WHERE org.name = {organization} AND c.name = {channelName}
+                        delete rel,c;")
+
 (def join-channel-query "MATCH (org:Organization)-[:HAS_CHANNEL]-(channel)
                         WHERE org.name = {organization} AND channel.name = {channelName}
                         MATCH (org)-[:HAS_USER]-(user) WHERE user.name = {username}
                         CREATE (channel)-[:HAS_MEMBER]->(user), (user)-[:IS_MEMBER]->(channel);")
+
+(def quit-channel-query "MATCH (org:Organization)-[:HAS_CHANNEL]-(channel)
+                        WHERE org.name = {organization} AND channel.name = {channelName}
+                        MATCH (org)-[:HAS_USER]-(user) WHERE user.name = {username}
+                        MATCH (channel)-[relation]-(user) DELETE relation;")
 
 (def get-users-channels "MATCH (org:Organization)-[:HAS_USER]-(user)
                         WHERE user.name = {username} AND org.name = {organization}
@@ -27,14 +36,12 @@
 (defn get-channels
   [org]
   (let [result (cy/tquery neo4j/conn channel-query {:organization (str org)})]
-    result))
+     (map (fn[x] (get-in x ["channels" :data])) result)))
 
 (defn create-new-channel
-  [body]
-  (let [organization (get body "organization")
-        name (get body "channel")]
-    (cy/tquery neo4j/conn create-channel-query
-      {:organization (str organization) :newName (str name)})))
+  [org name]
+  (cy/tquery neo4j/conn create-channel-query
+    {:organization (str org) :newName (str name)}))
 
 (defn join-channel
   [org channel username]
