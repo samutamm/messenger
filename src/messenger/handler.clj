@@ -12,6 +12,10 @@
   (GET "/channels" [organization] (resp/response (channels/get-channels organization)))
   (POST "/channels/new" {body :body} (let [org (get body "organization") name (get body "channel")]
                                         (resp/response (channels/create-new-channel org name))))
+  (GET "/channels/:username" [organization username] (resp/response
+                                                      (channels/get-users-channels organization username)))
+  (POST "/channels/join" {body :body} (resp/response (channels/join-channel
+                                        (get body "organization")(get body "channel")(get body "username"))))
   (route/resources "/")
   (route/not-found "Not Found"))
 
