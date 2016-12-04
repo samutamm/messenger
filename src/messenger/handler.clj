@@ -5,6 +5,7 @@
             [compojure.handler                :as handler]
             [ring.util.response               :as resp]
             [ring.middleware.json             :as rj]
+            [ring.middleware.cors             :refer [wrap-cors]]
             [compojure.route                  :as route]
             [messenger.models.channels        :as channels]))
 
@@ -12,10 +13,10 @@
   (GET "/channels" [organization] (resp/response (channels/get-channels organization)))
   (POST "/channels/new" {body :body} (let [org (get body "organization") name (get body "channel")]
                                         (resp/response (channels/create-new-channel org name))))
+  (POST "/channels/join" [organization channel username] (resp/response (channels/join-channel
+                                        organization channel username)))
   (GET "/channels/:username" [organization username] (resp/response
                                                       (channels/get-users-channels organization username)))
-  (POST "/channels/join" {body :body} (resp/response (channels/join-channel
-                                        (get body "organization")(get body "channel")(get body "username"))))
   (route/resources "/")
   (route/not-found "Not Found"))
 
@@ -32,6 +33,8 @@
 (def app
   (-> app-routes
       (handler/site)
-      (allow-cross-origin)
       (rj/wrap-json-response)
-      (rj/wrap-json-body)))
+      (rj/wrap-json-body)
+      (wrap-cors :access-control-allow-origin #"http://localhost:3000"
+                 :access-control-allow-methods [:get :put :post :options]
+                 :access-control-allow-headers ["Origin" "X-Requested-With" "Content-Type" "X-Auth-Token" "Accept"])))

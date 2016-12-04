@@ -6,7 +6,8 @@
   :dependencies [[org.clojure/clojure "1.7.0"]
                  [compojure "1.5.1"]
                  [clojurewerkz/neocons "3.0.0"]
-                 [ring/ring-json "0.3.1"]]
+                 [ring/ring-json "0.3.1"]
+                 [ring-cors "0.1.6"]]
   :plugins [[lein-ring "0.8.11"]]
   :ring {:handler messenger.handler/app}
   :profiles {:dev {:dependencies [[javax.servlet/servlet-api "2.5"]
