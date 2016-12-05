@@ -60,3 +60,8 @@
     (user/create-user-if-not-exist org username)
     (map filter-channel-data (cy/tquery neo4j/conn get-users-channels-query
       {:organization org :username username}))))
+
+(defn quit-channel
+  [org channel username]
+  (cy/tquery neo4j/conn quit-channel-query
+    {:organization org :channelName channel :username username}))

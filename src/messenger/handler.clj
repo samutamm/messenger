@@ -15,6 +15,8 @@
                                         (resp/response (channels/create-new-channel org name))))
   (POST "/channels/join" [organization channel username] (resp/response (channels/join-channel
                                         organization channel username)))
+  (POST "/channels/quit" [organization channel username] (resp/response (channels/quit-channel
+                                        organization channel username)))
   (GET "/channels/:username" [organization username] (resp/response
                                                       (channels/get-users-channels organization username)))
   (route/resources "/")
