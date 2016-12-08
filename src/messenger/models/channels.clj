@@ -19,7 +19,7 @@
 (def join-channel-query "MATCH (org:Organization)-[:HAS_CHANNEL]-(channel)
                         WHERE org.name = {organization} AND channel.name = {channelName}
                         MATCH (org)-[:HAS_USER]-(user) WHERE user.name = {username}
-                        CREATE (channel)-[:HAS_MEMBER]->(user), (user)-[:IS_MEMBER]->(channel);")
+                        CREATE UNIQUE (channel)-[:HAS_MEMBER]->(user), (user)-[:IS_MEMBER]->(channel);")
 
 (def quit-channel-query "MATCH (org:Organization)-[:HAS_CHANNEL]-(channel)
                         WHERE org.name = {organization} AND channel.name = {channelName}
