@@ -9,7 +9,8 @@
             [ring.middleware.json             :as rj]
             [ring.middleware.cors             :refer [wrap-cors]]
             [compojure.route                  :as route]
-            [messenger.models.channels        :as channels])
+            [messenger.models.channels        :as channels]
+            [messenger.models.messages        :as messages])
             (:gen-class))
 
 (defroutes routes
@@ -22,6 +23,10 @@
                                         organization channel username)))
   (GET "/channels/:username" [organization username] (resp/response
                                                       (channels/get-users-channels organization username)))
+  (POST "/messages/new" [organization channel message sender] (resp/response (messages/create-new-message
+                                        organization channel message sender)))
+  (GET "/messages" [organization channel] (resp/response (messages/ten-latest-messages
+                                        organization channel)))
   (route/resources "/")
   (route/not-found "Not Found"))
 
