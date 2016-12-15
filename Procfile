@@ -1,1 +1,1 @@
-web: java $JVM_OPTS -cp target/messenger-standalone.jar
+web: java -jar target/messenger-standalone.jar
