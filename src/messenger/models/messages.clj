@@ -15,12 +15,24 @@
     (channel)-[:NEXT_MESSAGE]->(newMessage),
     (newMessage)-[:NEXT_MESSAGE]->(oldNewMessage);")
 
-(defn create-new-message
-  [org channel message sender]
-  (cy/tquery neo4j/conn create-new-message-query
-    {:organization (str org) :channel (str channel) :message (str message) :sender (str sender)}))
+(def create-first-message-query
+  "MATCH (org:Organization)-[:HAS_CHANNEL]->(channel)
+    WHERE org.name = {organization} AND channel.name = {channel}
+    CREATE (newMessage:Message {text: {message}, sender: {sender}}),
+    (channel)-[:NEXT_MESSAGE]->(newMessage);")
 
 (defn ten-latest-messages
   [org channel]
   (map (fn[x](get-in x ["messages" :data])) (cy/tquery neo4j/conn ten-latest-message-query
     {:organization (str org) :channel (str channel)})))
+
+(defn create-new-message
+  "There is three db-queries for each call of this function. Should be
+  refactored to one query"
+  [org channel message sender]
+  (let [params {:organization (str org) :channel (str channel) :message (str message) :sender (str sender)}]
+    do
+    (if (= (count (ten-latest-messages org channel)) 0)
+      (cy/tquery neo4j/conn create-first-message-query params)
+      (cy/tquery neo4j/conn create-new-message-query params))
+    (ten-latest-messages org channel)))
