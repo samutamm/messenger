@@ -35,7 +35,7 @@
     (handler/site)
     (rj/wrap-json-response)
     (rj/wrap-json-body)
-    (wrap-cors :access-control-allow-origin #"http://localhost:3000"
+    (wrap-cors :access-control-allow-origin #"https://samu-slak.herokuapp.com"
                :access-control-allow-methods [:get :put :post :options]
                :access-control-allow-headers ["Origin" "X-Requested-With" "Content-Type" "X-Auth-Token" "Accept"])))
 

@@ -35,4 +35,4 @@
     (if (= (count (ten-latest-messages org channel)) 0)
       (cy/tquery neo4j/conn create-first-message-query params)
       (cy/tquery neo4j/conn create-new-message-query params))
-    (ten-latest-messages org channel)))
+    {:messages (ten-latest-messages org channel) :channel channel}))
