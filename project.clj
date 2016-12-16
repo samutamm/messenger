@@ -1,6 +1,6 @@
 (defproject messenger "0.1.0-SNAPSHOT"
   :description "For slak messaging"
-  :min-lein-version "2.0.0"
+  :min-lein-version "2.7.1"
   :uberjar-name "messenger-standalone.jar"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
