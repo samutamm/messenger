@@ -30,14 +30,26 @@
   (route/resources "/")
   (route/not-found "Not Found"))
 
+
+(defn cors-ring-handler
+  "Wraps the ring handler to support CORS"
+  [handler]
+  (fn [request]
+    (let [resp (handler request)]
+      ; If the response is nil, don't pass through ring-cors
+      (if ((complement nil?) resp)
+        (let [cors-wrapped-handler
+              (wrap-cors :access-control-allow-origin [#"https://samu-slak.herokuapp.com"]
+                         :access-control-allow-methods [:get :put :post :options]
+                         :access-control-allow-headers ["Origin" "X-Requested-With" "Content-Type" "X-Auth-Token" "Accept"])]
+          (cors-wrapped-handler request))))))
+
 (def application
   (-> routes
     (handler/site)
     (rj/wrap-json-response)
     (rj/wrap-json-body)
-    (wrap-cors :access-control-allow-origin [#"https://samu-slak.herokuapp.com"]
-               :access-control-allow-methods [:get :put :post :options]
-               :access-control-allow-headers ["Origin" "X-Requested-With" "Content-Type" "X-Auth-Token" "Accept"])))
+    (cors-ring-handler)
 
 (defn start [port]
  (ring/run-jetty application {:port port
