@@ -49,7 +49,7 @@
     (handler/site)
     (rj/wrap-json-response)
     (rj/wrap-json-body)
-    (cors-ring-handler)
+    (cors-ring-handler)))
 
 (defn start [port]
  (ring/run-jetty application {:port port
