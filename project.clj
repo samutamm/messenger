@@ -8,7 +8,7 @@
                  [org.immutant/web "2.0.0-beta2"]
                  [compojure "1.5.1"]
                  [ring/ring-jetty-adapter "1.4.0"]
-                 [clojurewerkz/neocons "3.0.0"]
+                 [clojurewerkz/neocons "3.1.0"]
                  [ring/ring-json "0.3.1"]
                  [ring-cors "0.1.6"]
                  [environ "1.0.0"]]
